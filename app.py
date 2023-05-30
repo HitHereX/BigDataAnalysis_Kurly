@@ -1,5 +1,6 @@
 import streamlit as st
 from PIL import Image
+MESSAGES = ['a','b']
 
 def main() :
 
@@ -9,6 +10,7 @@ def main() :
     col1,col2 = st.columns([2,3])
     # 공간을 2:3 으로 분할하여 col1과 col2라는 이름을 가진 컬럼을 생성합니다.  
     col3,col4,col5,col6 = st.columns([1,1,1,1])
+    # 공간을 1:1:1:1 으로 분할하여col3~6라는 이름을 가진 컬럼을 생성합니다.  
 
     with col1 :
       # column 1 에 담을 내용
@@ -23,25 +25,35 @@ def main() :
     #--------------------------------- 리뷰 등록 입력 form
     # with 구문 말고 다르게 사용 가능 
     #리뷰 Text input (title:제목, message: 리뷰 내용)
-    title = st.text_input(label="후기 쓰기", value="제목을 적어주세요.", max_chars=10, help='input message < 10')
-    message = st.text_area(label="내용 ", value="내용을 적어주세요.", max_chars=100, help='input message < 100', height=10)
-    
+ 
+    with st.form(key='my_form'):
+      title = st.text_input(label="후기 쓰기", value="[KF365 감자 1kg]", max_chars=10, help='input message < 20')
+      message = st.text_area(label="내용 ", value="내용을 적어주세요.", max_chars=100, help='input message < 100', height=10)
+      
+      taste=st.checkbox('맛있어요.')
+      st.checkbox('포장 상태가 깔끔해요.')
+      st.checkbox('배송이 빨라요.')
+      #등록 버튼 (코멘트가 추가 됨)
+#      messages=["a","b"]
+      submitted = st.form_submit_button("등록하기")
+      if submitted:
+          st.balloons()
+          if message != "내용을 적어주세요.":
+              MESSAGES.append(message)
+
+
+#    메시지 댓글로 보이게 하기
+    for i in MESSAGES:
+        st.success(i)
+    st.text(len(MESSAGES))
+
+
+    print(message)
 
     multi_select = st.multiselect('Please select somethings in multi selectbox!',
                                     ['구매동기', '맛', '상태', '배송'])
-      
     st.write('You selected:', multi_select)
 
-    #도움돼요 버튼
-    st.button("👍도움돼요")
-    st.button("👎도움 안 돼요")
-
-    #등록 버튼 (코멘트가 추가 됨)
-    if st.button("등록하기", key='message'):
-      st.write("Data Loading..")
-      result = message.title()
-      st.success(result)
-      
       # 데이터 로딩 함수는 여기에!
 
     #--------------------------------- 리뷰 데이터 간단 요약
