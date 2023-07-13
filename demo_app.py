@@ -61,7 +61,7 @@ def ChatGPT_demo(keyword = str):
                     '감자를 잘게 채 썰어서 튀김가루에 약간의 소금과 후추로 간을 해서 튀겨먹으면 맛있어요.',
                     '받자마자 감자를 얇게 채 썰어 베이컨을 얇게 자른 후에 치즈가루와 후추로 전 부쳐먹었어요.']
    
-   randv = randint(0, len(answers['적당']))
+   randv = randint(0, len(answers['적당'])-1)
    return answers[keyword][randv]
 
    
@@ -122,11 +122,11 @@ def main() :
     st.write('이 페이지는 제안을 위한 데모 페이지입니다')
 
     #--------------------------------- import
-    potato_img = Image.open('resources/Potato.PNG')
-    wc_img = Image.open('resources/wc.png')
-    review1 = Image.open('resources/review.png')
-    review2 = Image.open('resources/review2.png')
-    review3 = Image.open('resources/review3.png')
+    potato_img = Image.open('Potato.PNG')
+    wc_img = Image.open('wc.png')
+    review1 = Image.open('review.png')
+    review2 = Image.open('review2.png')
+    review3 = Image.open('review3.png')
 
     df = pd.read_csv('./resources/hehe.csv')
     
@@ -163,30 +163,30 @@ def main() :
     selected_keywords = ['']
 
     with col4_1:
-        st.subheader('TOPIC 1')
-        for word in TOPIC1:
-            temp = st.checkbox(word)
-            if temp :
-                selected_keywords.append(word)  
+        with st.form('TOPIC 1'):
+            for word in TOPIC1:
+                submit = st.form_submit_button(word)
+                if submit :
+                    selected_keywords.append(word)  
         st.image(review1)
 
     with col4_2:
-        st.subheader('TOPIC 2')
-        for word in TOPIC2:
-          temp = st.checkbox(word)
-          if temp :
-             if word != '(감자)알' :
-                selected_keywords.append(word)
-             else:
-                selected_keywords.append('알도')
+        with st.form('TOPIC 2'):
+            for word in TOPIC2:
+                submit = st.form_submit_button(word)
+                if submit :
+                    if word == '(감자)알':
+                        selected_keywords.append('알도')
+                    else:
+                        selected_keywords.append(word) 
         st.image(review2)
 
     with col4_3:
-        st.subheader('TOPIC 3')
-        for word in TOPIC3:
-            temp = st.checkbox(word)
-            if temp :
-               selected_keywords.append(word)  
+        with st.form('TOPIC 3'):
+            for word in TOPIC3:
+                submit = st.form_submit_button(word)
+                if submit :
+                    selected_keywords.append(word)  
         st.image(review3)
 
 
