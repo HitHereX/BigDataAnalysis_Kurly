@@ -34,19 +34,19 @@ def ChatGPT(keyword = str):
 def leave_comments(comments = list, keyword = str):
     default = ''
     if keyword == '':
-        st.subheader('키워드를 선택하시면 AI가 예시 댓글을 보여드려요')
+        st.subheader('키워드를 선택하시면 AI가 예시 구매 후기를 보여드려요')
         message = st.text_area(label=f'키워드를 선택해 주세요!', 
                         value= default,
                         max_chars=100, 
-                        help='예시 문장을 참고하여 댓글을 입력해 주세요', 
+                        help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
                         height=10)
 
     else :
         st.subheader("고객님께서 현재 선택하신 키워드는 %s 입니다. " %keyword)
-        message = st.text_area(label='예시 댓글 : '+ChatGPT(keyword), 
+        message = st.text_area(label='예시 구매후기 : '+ChatGPT(keyword), 
                                 value=default, 
                                 max_chars=100, 
-                                help='다른 고객분들께 여러분의 구매 경험을 나누어 주세요', 
+                                help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
                                 height=10)
 
 
@@ -82,7 +82,7 @@ def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
 
 def main() :
 
-    st.title("마켓컬리 댓글 분석 데모 페이지")
+    st.title("마켓컬리 구매후기 분석 데모 페이지")
     st.write('이 페이지는 제안을 위한 데모 페이지입니다')
 
     #--------------------------------- import
@@ -99,7 +99,7 @@ def main() :
     # 공간을 2:3 으로 분할하여 col1과 col2라는 이름을 가진 컬럼을 생성합니다.
     st.write('  ') #split spaces
     st.write('  ') #split spaces
-    st.subheader('댓글 분석 결과')
+    st.subheader('구매후기 분석 결과')
     st.write('토픽을 하나만 선택해주세요')
     col3,col4_1, col4_2, col4_3 = st.columns([2,1,1,1])
     # 공간을 2:3 으로 분할하여col3, 4라는 이름을 가진 컬럼을 생성합니다.  
@@ -160,9 +160,9 @@ def main() :
     comments, cnt = load_comments(df, selected_keywords[-1], 5)
     per = int(cnt*100/(0.2*len(df)))
     if per == 500:
-       st.subheader(f'키워드를 선택하시면, 관련 댓글을 모아보실 수 있어요')
+       st.subheader(f'키워드를 선택하시면, 관련 구매후기를 모아보실 수 있어요')
     else:
-        st.subheader(f'선택하신 "{selected_keywords[-1]}" 을(를) 포함하는 댓글은 {cnt:,}개({int(cnt*100/(0.2*len(df)))}%)예요')
+        st.subheader(f'선택하신 "{selected_keywords[-1]}" 을(를) 포함하는 후기는 {cnt:,}개({int(cnt*100/(0.2*len(df)))}%)예요')
 #    print(comments[:5])
 
     for comment in comments:
