@@ -123,10 +123,10 @@ def main() :
 
     #--------------------------------- import
     potato_img = Image.open('resources/Potato.PNG')
-    wc_img = Image.open('./resources/wc.png')
-    review1 = Image.open('./resources/review.png')
-    review2 = Image.open('./resources/review2.png')
-    review3 = Image.open('./resources/review3.png')
+    wc_img = Image.open('resources/wc.png')
+    review1 = Image.open('resources/review.png')
+    review2 = Image.open('resources/review2.png')
+    review3 = Image.open('resources/review3.png')
 
     df = pd.read_csv('./resources/hehe.csv')
     
