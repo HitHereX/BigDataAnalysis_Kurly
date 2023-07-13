@@ -147,12 +147,12 @@ def main() :
     with col2 :
       #감자 상품 정보
       st.header('KF365 감자 1kg')
-      st.markdown('### ~~4,500원~~ →  :red[*3,990원*]')
+      st.markdown('### ~~4,500원~~ →  :red[*3,990원*](12%)')
       st.markdown('---')
       st.markdown('컬리는 국내 농가에서 기른 맛 좋은 감자를 엄선해 문 앞까지\
                   신선하게 전해드릴게요. 취향에 따라 간단하게 찌거나 구워서 즐겨보세요. 볶음, 튀김 등의 요리로 \
-                  다채롭게 변신시키면 매일 식탁에 올려도 질리지 않을 거예요.    \
-                  [컬리 페이지 링크](https://www.kurly.com/goods/5026448)')
+                  다채롭게 변신시키면 매일 식탁에 올려도 질리지 않을 거예요.')
+      st.markdown('[컬리 페이지 링크](https://www.kurly.com/goods/5026448)')
       st.markdown('---')
 
 
