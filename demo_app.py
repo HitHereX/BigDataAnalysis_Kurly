@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_modal import Modal
 from PIL import Image
 import pandas as pd
 from random import randint
@@ -70,8 +71,8 @@ def ChatGPT_demo(keyword = str):
 def leave_comments(comments = list, keyword = str):
     default = ''
     if keyword == '':
-        st.subheader('키워드를 선택하시면 AI가 예시 구매 후기를 보여드려요')
-        message = st.text_area(label=f'키워드를 선택해 주세요!', 
+        st.subheader('키워드를 선택하시면 AI가 예시 구매후기를 보여드려요')
+        message = st.text_area(label='위에서 키워드를 선택해 주세요!', 
                         value= default,
                         max_chars=100, 
                         help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
@@ -87,7 +88,8 @@ def leave_comments(comments = list, keyword = str):
 
 
     #등록 버튼 (코멘트가 추가 됨)
-    photo, submitted = st.form_submit_button("사진 업로드"), st.form_submit_button("등록하기")
+    photo = st.form_submit_button("사진 업로드", disabled = True)
+    submitted = st.form_submit_button("등록하기")
     if submitted or photo:
         st.balloons()
         if message != default:
@@ -147,12 +149,12 @@ def main() :
     with col2 :
       #감자 상품 정보
       st.markdown('### KF365 감자 1kg')
-      st.markdown('##### ~~4,500원~~ →  :red[*3,990원*](12%)')
+      st.markdown('##### ~~4,500원~~ →  :blue[*3,990원* (12%)]')
       st.markdown('---')
       st.markdown('컬리는 국내 농가에서 기른 맛 좋은 감자를 엄선해 문 앞까지\
                   신선하게 전해드릴게요. 취향에 따라 간단하게 찌거나 구워서 즐겨보세요. 볶음, 튀김 등의 요리로 \
                   다채롭게 변신시키면 매일 식탁에 올려도 질리지 않을 거예요.')
-      st.markdown('[컬리 페이지 더보기](https://www.kurly.com/goods/5026448)')
+      st.markdown("[컬리에서 더보기](https://www.kurly.com/goods/5026448)")
       st.markdown('---')
 
 
@@ -199,9 +201,9 @@ def main() :
     comments, cnt = load_comments(df, selected_keywords[-1], 5)
     per = int(cnt*100/(0.2*len(df)))
     if per == 500:
-       st.subheader(f'키워드를 선택하시면, 관련 구매후기를 모아보실 수 있어요')
+       st.markdown('#### 키워드를 선택하시면, 관련 구매후기를 모아보실 수 있어요')
     else:
-        st.subheader(f'선택하신 "{selected_keywords[-1]}" 을(를) 포함하는 후기는 {cnt:,}개({int(cnt*100/(0.2*len(df)))}%)예요')
+        st.subheader(f'선택하신 "{selected_keywords[-1]}" 을(를) 포함하는 후기: {cnt:,}개({int(cnt*100/(0.2*len(df)))}%)')
 #    print(comments[:5])
 
     for comment in comments:
@@ -217,6 +219,11 @@ def main() :
     st.write('  ') #split spaces
     with st.form(key='my_form'):
         leave_comments(MESSAGES, selected_keywords[-1])
+
+    #copyright
+    st.write('Copyright ⓒHGU & CXLab 2023 All Rights Reserved.') #split spaces
+
+
 
 
 if __name__ == "__main__" :
