@@ -92,6 +92,9 @@ def leave_comments(comments = list, keyword = str):
     submitted = st.form_submit_button("등록하기")
     if submitted or photo:
         st.balloons()
+        st.markdown('##### 작성하신 구매후기가 잘 등록되었습니다! 감사합니다')
+        st.markdown('본 페이지는 Test-시연용으로 후기가 기록되지 않습니다. 너그러운 이해 부탁드립니다.')
+
         if message != default:
             comments.append(message)   
    
