@@ -79,7 +79,7 @@ def leave_comments(comments = list, keyword = str):
                         height=10)
 
     else :
-        st.subheader("고객님께서 현재 선택하신 키워드는 %s 입니다. " %keyword)
+        st.subheader('고객님께서 현재 선택하신 키워드는 "%s" 입니다.' %keyword)
         message = st.text_area(label='예시 구매후기 : '+ChatGPT_demo(keyword), 
                                 value=default, 
                                 max_chars=100, 
@@ -141,7 +141,7 @@ def main() :
     st.write('  ') #split spaces
     st.write('  ') #split spaces
     st.subheader('구매후기 분석 결과')
-    st.write('토픽을 하나만 선택해주세요. 여러개 선택하시면 마지막에 고르신 토픽에 대한 결과를 드려요')
+    st.write('키워드를 1개 선택해주세요')
     col3,col4_1, col4_2, col4_3 = st.columns([2,1,1,1])
     # 공간을 2:3 으로 분할하여col3, 4라는 이름을 가진 컬럼을 생성합니다.  
 
@@ -206,7 +206,12 @@ def main() :
     if per == 500:
        st.markdown('#### 키워드를 선택하시면, 관련 구매후기를 모아보실 수 있어요')
     else:
-        st.subheader(f'선택하신 "{selected_keywords[-1]}" 을(를) 포함하는 후기: {cnt:,}개({int(cnt*100/(0.2*len(df)))}%)')
+        keyword = selected_keywords[-1]
+        if keyword == '가루':
+            ratio = int(cnt*10000/(0.2*len(df)))
+        else:
+            ratio = int(cnt*100/(0.2*len(df)))
+        st.subheader(f'선택하신 "{keyword}" 을(를) 포함하는 후기: {cnt:,}개({ratio}%)')
 #    print(comments[:5])
 
     for comment in comments:
