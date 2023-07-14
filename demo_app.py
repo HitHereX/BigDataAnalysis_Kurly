@@ -208,7 +208,7 @@ def main() :
     else:
         keyword = selected_keywords[-1]
         if keyword == '가루':
-            ratio = int(cnt*10000/(0.2*len(df)))
+            ratio = int(cnt*5000/(0.2*len(df)))
         else:
             ratio = int(cnt*100/(0.2*len(df)))
         st.subheader(f'선택하신 "{keyword}" 을(를) 포함하는 후기: {cnt:,}개({ratio}%)')
