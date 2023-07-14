@@ -124,7 +124,7 @@ def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
 def main() :
 
     st.title("마켓컬리 구매후기 분석 데모 페이지")
-    st.write('이 페이지는 제안을 위한 데모 페이지입니다')
+    st.write('본 서비스는 설문을 위한 Test-시연 페이지입니다 (참고용)')
 
     #--------------------------------- import
     potato_img = Image.open('Potato.PNG')
