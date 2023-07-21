@@ -116,6 +116,7 @@ def leave_comments(comments = list, keyword = str):
 
         if message != default:
             comments.append(message)   
+            return message
    
 
 def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
