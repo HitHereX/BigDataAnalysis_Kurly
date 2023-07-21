@@ -1,8 +1,10 @@
+from google.oauth2 import service_account
+from random import randint
 import streamlit as st
-from streamlit_modal import Modal
 from PIL import Image
 import pandas as pd
-from random import randint
+import datetime
+import gspread
 import openai
 
 
@@ -11,8 +13,26 @@ TOPIC1 = ['적당','싱싱', '신선']
 TOPIC2 = ['(감자)알','포슬포슬','단단']
 TOPIC3 = ['볶음','카레','가루']
 
+#google auth connect
+scope = ['https://spreadsheets.google.com/feeds',
+         'https://www.googleapis.com/auth/drive']
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets['gcp_service_account'],
+    scopes = scope
+)
+
+gspread_cli = gspread.authorize(credentials)
+sh = gspread_cli.open('comments').worksheet('default')
+
+#OpenAI
 model_engine = "text-davinci-003"
 openai.api_key = "" #follow step 4 to get a secret_key
+
+
+def update_spreadsheet(comment):
+    if type(comment) == str:
+        l = (comment, len(comment), str(datetime.datetime.now()))
+        sh.append_row(l)
 
 
 def ChatGPT(keyword = str):
@@ -93,7 +113,6 @@ def leave_comments(comments = list, keyword = str):
     if submitted or photo:
         st.balloons()
         st.markdown('##### 작성하신 구매후기가 잘 등록되었습니다! 감사합니다')
-        st.markdown('본 페이지는 Test-시연용으로 후기가 기록되지 않습니다. 너그러운 이해 부탁드립니다.')
 
         if message != default:
             comments.append(message)   
@@ -226,7 +245,8 @@ def main() :
     st.write('  ') #split spaces
     st.write('  ') #split spaces
     with st.form(key='my_form'):
-        leave_comments(MESSAGES, selected_keywords[-1])
+        temp = leave_comments(MESSAGES, selected_keywords[-1])
+        update_spreadsheet(comment=temp)
 
     #copyright
     st.write('Copyright ⓒHGU & CXLab 2023 All Rights Reserved.') #split spaces
