@@ -1,9 +1,10 @@
 from google.oauth2 import service_account
+from datetime import datetime
 from random import randint
+from pytz import timezone
 import streamlit as st
 from PIL import Image
 import pandas as pd
-import datetime
 import gspread
 import openai
 
@@ -31,7 +32,7 @@ openai.api_key = "" #follow step 4 to get a secret_key
 
 def update_spreadsheet(comment):
     if type(comment) == str:
-        l = (comment, len(comment), str(datetime.datetime.now()))
+        l = (comment, len(comment), str(datetime.now(timezone('Asia/Seoul'))))
         sh.append_row(l)
 
 
