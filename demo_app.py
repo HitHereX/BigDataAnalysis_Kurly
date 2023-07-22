@@ -163,6 +163,8 @@ def main() :
     st.write('  ') #split spaces
     st.subheader('구매후기 분석 결과')
     st.write('키워드를 1개 선택해주세요')
+    col4_1, col4_2, col4_3 = st.columns([1,1,1])
+
     # 공간을 2:3 으로 분할하여col3, 4라는 이름을 가진 컬럼을 생성합니다.  
 
     with col1 :
@@ -186,7 +188,6 @@ def main() :
 
     selected_keywords = ['']
 
-    col4_1, col4_2, col4_3 = st.columns([1,1,1])
     with col4_1:
         with st.form('TOPIC 1'):
             for word in TOPIC1:
