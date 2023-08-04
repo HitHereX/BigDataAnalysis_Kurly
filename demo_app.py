@@ -96,7 +96,7 @@ def leave_comments(comments = list, keyword = str):
     default = ''
     if keyword == '':
         st.subheader('키워드를 선택하시면 AI가 예시 구매후기를 보여드려요')
-        message = st.text_area(label='위에서 키워드를 선택해 주세요!', 
+        msg = st.text_area(label='위에서 키워드를 선택해 주세요!', 
                         value= default,
                         max_chars=100, 
                         help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
@@ -104,7 +104,7 @@ def leave_comments(comments = list, keyword = str):
 
     else :
         st.subheader('고객님께서 현재 선택하신 키워드는 "%s" 입니다.' %keyword)
-        message = st.text_area(label='예시 구매후기 : '+ChatGPT_demo(keyword), 
+        msg = st.text_area(label='예시 구매후기 : '+ChatGPT_demo(keyword), 
                                 value=default, 
                                 max_chars=100, 
                                 help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
@@ -118,9 +118,9 @@ def leave_comments(comments = list, keyword = str):
         st.balloons()
         st.markdown('##### 작성하신 구매후기가 잘 등록되었습니다! 감사합니다')
 
-        if message != default:
-            comments.append(message)   
-            return message
+        if msg != default:
+            comments.append(msg)   
+            return msg
    
 
 def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
@@ -166,8 +166,7 @@ def main() :
     st.write('  ') #split spaces
     st.write('  ') #split spaces
     st.subheader('구매후기 분석 결과')
-    st.write('키워드를 1개 선택해주세요')
-    col4_1, col4_2, col4_3 = st.columns([1,1,1])
+    st.write('키워드를 1개만 선택해주세요')
 
     # 공간을 2:3 으로 분할하여col3, 4라는 이름을 가진 컬럼을 생성합니다.  
 
