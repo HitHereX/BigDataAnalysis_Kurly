@@ -10,9 +10,12 @@ import openai
 
 
 MESSAGES = []
-TOPIC1 = ['적당','싱싱', '신선']
-TOPIC2 = ['(감자)알','포슬포슬','단단']
-TOPIC3 = ['볶음','카레','가루']
+
+TOPICS = [
+    ('적당', '싱싱', '신선'),
+    ('(감자)알','포슬포슬','단단'),
+    ('볶음','카레','가루')
+]
 
 #google auth connect
 scope = ['https://spreadsheets.google.com/feeds',
@@ -153,6 +156,7 @@ def main() :
     review1 = Image.open('review.png')
     review2 = Image.open('review2.png')
     review3 = Image.open('review3.png')
+    topic_imgs = [review1, review2, review3]
 
     df = pd.read_csv('./resources/hehe.csv')
     
@@ -188,35 +192,18 @@ def main() :
 
     selected_keywords = ['']
 
-    with col4_1:
-        with st.form('TOPIC 1'):
-            for word in TOPIC1:
-                submit = st.form_submit_button(word)
-                if submit :
-                    selected_keywords.append(word)  
-        st.image(review1)
-
-    with col4_2:
-        with st.form('TOPIC 2'):
-            for word in TOPIC2:
-                submit = st.form_submit_button(word)
-                if submit :
-                    if word == '(감자)알':
-                        selected_keywords.append('알도')
-                    else:
-                        selected_keywords.append(word) 
-        st.image(review2)
-
-    with col4_3:
-        with st.form('TOPIC 3'):
-            for word in TOPIC3:
-                submit = st.form_submit_button(word)
-                if submit :
-                    selected_keywords.append(word)  
-        st.image(review3)
-
 
     print(selected_keywords)
+    tabs = st.tabs(['🚛적당, 싱싱, 신선', '🥔(감자)알, 포슬포슬, 단단', '🍽 볶음, 카레, 가루'])
+    for tab, topic, img in zip(tabs, TOPICS, topic_imgs):
+        with tab:
+            st.image(img)
+            with st.form(topic[0]):
+                for word in topic:
+                     submit = st.form_submit_button(word)
+                     if submit:
+                        selected_keywords.append(word)
+
 
     # 데이터 로딩 함수는 여기에!
     st.write('  ') #split spaces
