@@ -193,21 +193,21 @@ def main() :
     selected_keywords = ['']
 
 
-    print(selected_keywords)
-    tabs = st.tabs(['🚛적당, 싱싱, 신선', '🥔(감자)알, 포슬포슬, 단단', '🍽 볶음, 카레, 가루'])
+    tabs = st.tabs(['🚛 적당, 싱싱, 신선', '🥔 (감자)알, 포슬포슬, 단단', '🍽 볶음, 카레, 가루'])
     for tab, topic, img in zip(tabs, TOPICS, topic_imgs):
         with tab:
             st.image(img)
-            with st.form(topic[0]):
-                for word in topic:
-                     submit = st.form_submit_button(word)
-                     if submit:
-                        selected_keywords.append(word)
+            for atopic in topic:
+                t = st.checkbox(atopic) #알도 예외처리!
+                if t:
+                    if atopic ==  '(감자)알' : selected_keywords.append('알도')
+                    else: selected_keywords.append(atopic)
+    print('selected keywords', selected_keywords)
 
 
-    # 데이터 로딩 함수는 여기에!
-    st.write('  ') #split spaces
-    st.write('  ') #split spaces
+    # split spaces
+    st.write('  ')
+    st.write('  ')
 
     comments, cnt = load_comments(df, selected_keywords[-1], 5)
     per = int(cnt*100/(0.2*len(df)))
