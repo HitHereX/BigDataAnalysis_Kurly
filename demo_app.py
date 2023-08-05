@@ -8,29 +8,42 @@ import pandas as pd
 import gspread
 import openai
 
+import pathlib
+from bs4 import BeautifulSoup
+import logging
+import shutil
 
-MESSAGES = []
 
-TOPICS = [
-    ('적당', '싱싱', '신선'),
-    ('(감자)알','포슬포슬','단단'),
-    ('볶음','카레','가루')
-]
+def inject_ga():
+    GA_ID = "google_analytics"
 
-#google auth connect
-scope = ['https://spreadsheets.google.com/feeds',
-         'https://www.googleapis.com/auth/drive']
-credentials = service_account.Credentials.from_service_account_info(
-    st.secrets['gcp_service_account'],
-    scopes = scope
-)
+    # Note: Please replace the id from G-XXXXXXXXXX to whatever your
+    # web application's id is. You will find this in your Google Analytics account
+    
+    GA_JS = """
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-T89084L2DT');
+    </script>
+    """
 
-gspread_cli = gspread.authorize(credentials)
-sh = gspread_cli.open('comments').worksheet('default')
-
-#OpenAI
-model_engine = "text-davinci-003"
-openai.api_key = "" #follow step 4 to get a secret_key
+    # Insert the script in the head tag of the static template inside your virtual
+    index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
+    logging.info(f'editing {index_path}')
+    soup = BeautifulSoup(index_path.read_text(), features="html.parser")
+    if not soup.find(id=GA_ID):  # if cannot find tag
+        bck_index = index_path.with_suffix('.bck')
+        if bck_index.exists():
+            shutil.copy(bck_index, index_path)  # recover from backup
+        else:
+            shutil.copy(index_path, bck_index)  # keep a backup
+        html = str(soup)
+        new_html = html.replace('<head>', '<head>\n' + GA_JS)
+        index_path.write_text(new_html)
 
 
 def update_spreadsheet(comment, chosen_topic, suggested_review):
@@ -120,7 +133,8 @@ def leave_comments(keyword = str):
                     value= val,
                     max_chars=100, 
                     help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
-                    height=10)
+                    height=10
+                    )
     print(msg)
 
 
@@ -156,6 +170,30 @@ def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
 
     return include[:5], cnt
 
+MESSAGES = []
+
+TOPICS = [
+    ('적당', '싱싱', '신선'),
+    ('(감자)알','포슬포슬','단단'),
+    ('볶음','카레','가루')
+]
+
+#google auth connect
+scope = ['https://spreadsheets.google.com/feeds',
+         'https://www.googleapis.com/auth/drive']
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets['gcp_service_account'],
+    scopes = scope
+)
+
+gspread_cli = gspread.authorize(credentials)
+sh = gspread_cli.open('comments').worksheet('default')
+
+#OpenAI
+model_engine = "text-davinci-003"
+openai.api_key = "" #follow step 4 to get a secret_key
+
+inject_ga()
 
 
 def main() :
@@ -164,11 +202,11 @@ def main() :
     st.write('본 서비스는 설문을 위한 Test-시연 페이지입니다 (참고용)')
 
     #--------------------------------- import
-    potato_img = Image.open('./resources/Potato.PNG')
-    wc_img = Image.open('./resources/wc.png')
-    review1 = Image.open('./resources/review.png')
-    review2 = Image.open('./resources/review2.png')
-    review3 = Image.open('./resources/review3.png')
+    potato_img = Image.open('resources/Potato.PNG')
+    wc_img = Image.open('resources/wc.png')
+    review1 = Image.open('resources/review.png')
+    review2 = Image.open('resources/review2.png')
+    review3 = Image.open('resources/review3.png')
     topic_imgs = [review1, review2, review3]
 
     df = pd.read_csv('./resources/hehe.csv')
