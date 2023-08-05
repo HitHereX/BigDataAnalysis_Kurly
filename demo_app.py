@@ -33,9 +33,14 @@ model_engine = "text-davinci-003"
 openai.api_key = "" #follow step 4 to get a secret_key
 
 
-def update_spreadsheet(comment):
+def update_spreadsheet(comment, chosen_topic, suggested_review):
     if type(comment) == str:
-        l = (comment, len(comment), str(datetime.now(timezone('Asia/Seoul'))))
+        l = (comment, 
+             len(comment), 
+             str(datetime.now(timezone('Asia/Seoul'))), 
+             str(datetime.now().weekday()), 
+             chosen_topic, 
+             suggested_review)
         sh.append_row(l)
 
 
@@ -58,6 +63,9 @@ def ChatGPT(keyword = str):
 
 def ChatGPT_demo(keyword = str):
    answers = {}
+   answers[''] = ['',
+                  '',
+                  '']
    answers['적당'] = ['감자는 맛있고 적당한 가격에 제공되어 매우 만족스러웠습니다',
                     '감자는 적당한 가격에 신선하고 맛있어서 매우 만족스러웠습니다.',
                     '감자는 맛있고 적당한 가격에 사기에 매우 만족합니다.']
@@ -92,23 +100,29 @@ def ChatGPT_demo(keyword = str):
    
 
 
-def leave_comments(comments = list, keyword = str):
-    default = ''
-    if keyword == '':
-        st.subheader('키워드를 선택하시면 AI가 예시 구매후기를 보여드려요')
-        msg = st.text_area(label='위에서 키워드를 선택해 주세요!', 
-                        value= default,
-                        max_chars=100, 
-                        help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
-                        height=10)
+def leave_comments(keyword = str):
+    subh = '키워드를 선택하시면 AI가 예시 구매후기를 보여드려요'
+    lab = '위에서 키워드를 선택해 주세요!'
+    ex = ChatGPT_demo(keyword)
+    val = ''
 
-    else :
-        st.subheader('고객님께서 현재 선택하신 키워드는 "%s" 입니다.' %keyword)
-        msg = st.text_area(label='예시 구매후기 : '+ChatGPT_demo(keyword), 
-                                value=default, 
-                                max_chars=100, 
-                                help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
-                                height=10)
+    if keyword != '':
+        subh = '고객님께서 현재 선택하신 키워드는 ' + keyword + ' 입니다.'
+        lab = '예시 구매후기 :'+ex
+
+    copy = st.form_submit_button('예시 후기 복사하기')
+    if copy:
+        val = ex
+    print('val', val)
+
+    st.subheader(subh)
+    msg = st.text_area(label=lab, 
+                    value= val,
+                    max_chars=100, 
+                    help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
+                    height=10)
+    print(msg)
+
 
 
     #등록 버튼 (코멘트가 추가 됨)
@@ -118,9 +132,8 @@ def leave_comments(comments = list, keyword = str):
         st.balloons()
         st.markdown('##### 작성하신 구매후기가 잘 등록되었습니다! 감사합니다')
 
-        if msg != default:
-            comments.append(msg)   
-            return msg
+        if msg != '':
+            update_spreadsheet(msg, keyword, ex)
    
 
 def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
@@ -151,11 +164,11 @@ def main() :
     st.write('본 서비스는 설문을 위한 Test-시연 페이지입니다 (참고용)')
 
     #--------------------------------- import
-    potato_img = Image.open('Potato.PNG')
-    wc_img = Image.open('wc.png')
-    review1 = Image.open('review.png')
-    review2 = Image.open('review2.png')
-    review3 = Image.open('review3.png')
+    potato_img = Image.open('./resources/Potato.PNG')
+    wc_img = Image.open('./resources/wc.png')
+    review1 = Image.open('./resources/review.png')
+    review2 = Image.open('./resources/review2.png')
+    review3 = Image.open('./resources/review3.png')
     topic_imgs = [review1, review2, review3]
 
     df = pd.read_csv('./resources/hehe.csv')
@@ -233,10 +246,19 @@ def main() :
     st.write('  ') #split spaces
     st.write('  ') #split spaces
     with st.form(key='my_form'):
-        temp = leave_comments(MESSAGES, selected_keywords[-1])
-        update_spreadsheet(comment=temp)
+        temp = leave_comments(selected_keywords[-1])
+    
+
+    a_df = pd.DataFrame(sh.get_all_records())
+    site_comments = a_df.Comment.tolist()
+
+    st.markdown('#### 다른 분들의 후기도 확인해보세요')
+    for cmt in site_comments[-5:]:
+        st.info(cmt)
 
     #copyright
+    st.write('  ') #split spaces
+    st.write('  ') #split spaces
     st.write('Copyright ⓒHGU & CXLab 2023 All Rights Reserved.') #split spaces
 
 
