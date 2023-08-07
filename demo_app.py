@@ -14,11 +14,6 @@ import logging
 import shutil
 import streamlit.components.v1 as components
 
-#google analytics call
-with open("google_analytics.html", "r") as f:
-    html_code = f.read()
-    components.html(html_code, height=0)
-
 
 def update_spreadsheet(comment, chosen_topic, suggested_review):
     topic_keys = {  '적당' : 0, 
@@ -138,6 +133,18 @@ def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
     return include[:5], cnt
 
 st.elements.utils._shown_default_value_warning=True
+
+st.markdown(
+    """
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-T89084L2DT"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-T89084L2DT');
+        </script>
+    """, unsafe_allow_html=True)
 
 TOPICS = [
     ('적당', '싱싱', '신선'),
