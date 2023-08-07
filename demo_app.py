@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 import logging
 import shutil
 import streamlit.components.v1 as components
-
+import streamlit_analytics
 
 def update_spreadsheet(comment, chosen_topic, suggested_review):
     topic_keys = {  '적당' : 0, 
@@ -133,42 +133,9 @@ def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
     return include[:5], cnt
 
 
-def inject_ga():
-    GA_ID = "google_analytics"
-
-    # Note: Please replace the id from G-XXXXXXXXXX to whatever your
-    # web application's id is. You will find this in your Google Analytics account
-    
-    GA_JS = """
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX');
-    </script>
-    """
-
-    # Insert the script in the head tag of the static template inside your virtual
-    index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
-    logging.info(f'editing {index_path}')
-    soup = BeautifulSoup(index_path.read_text(), features="html.parser")
-    if not soup.find(id=GA_ID):  # if cannot find tag
-        bck_index = index_path.with_suffix('.bck')
-        if bck_index.exists():
-            shutil.copy(bck_index, index_path)  # recover from backup
-        else:
-            shutil.copy(index_path, bck_index)  # keep a backup
-        html = str(soup)
-        new_html = html.replace('<head>', '<head>\n' + GA_JS)
-        index_path.write_text(new_html)
-
-
 
 
 st.elements.utils._shown_default_value_warning=True
-inject_ga()
 
 TOPICS = [
     ('적당', '싱싱', '신선'),
@@ -186,6 +153,7 @@ credentials = service_account.Credentials.from_service_account_info(
 
 gspread_cli = gspread.authorize(credentials)
 sh = gspread_cli.open('comments').worksheet('default_sheet')
+log = gspread_cli.open('comments').worksheet('log')
 
 #OpenAI
 model_engine = "text-davinci-003"
@@ -193,7 +161,8 @@ openai.api_key = ""
 
 
 def main() :
-    
+    streamlit_analytics.start_tracking()
+
     st.title("마켓컬리 구매후기 분석 데모 페이지")
     st.write('본 서비스는 설문을 위한 Test-시연 페이지입니다 (참고용)')
 
@@ -332,6 +301,7 @@ def main() :
     st.write('  ') #split spaces
     st.write('Copyright ⓒHGU & CXLab 2023 All Rights Reserved.') #split spaces
 
+    streamlit_analytics.stop_tracking()
 
 
 
