@@ -21,13 +21,39 @@ with open("google_analytics.html", "r") as f:
 
 
 def update_spreadsheet(comment, chosen_topic, suggested_review):
+    topic_keys = {  '적당' : 0, 
+                    '싱싱' : 1, 
+                    '신선' : 2, 
+                    '(감자)알' : 3,
+                    '포슬포슬' : 4,
+                    '단단' : 5,
+                    '볶음' : 6,
+                    '카레' : 7,
+                    '가루' : 8,
+                    '' : 9}
+    
+    week = ['MON','TUE','WED','THU','FRI','SAT','SUN']
+
+    now = datetime.now(timezone('Asia/Seoul'))
+    weekday = now.weekday()
+
+
     if type(comment) == str:
-        l = (comment, 
-             len(comment), 
-             str(datetime.now(timezone('Asia/Seoul'))), 
-             str(datetime.now().weekday()), 
-             chosen_topic, 
-             suggested_review)
+        print(comment)
+        l = [   comment, 
+                len(comment), 
+                chosen_topic,
+                topic_keys[chosen_topic], 
+                suggested_review,
+                week[weekday],
+                int(now.year),
+                int(now.month),
+                int(now.day),
+                int(now.hour),
+                int(now.minute)
+        ]
+
+        print(l)
         sh.append_row(l)
 
 
@@ -48,7 +74,7 @@ def ChatGPT(keyword = str):
     return response.split('\n')[-1]
 
 
-def ChatGPT_demo(keyword = str):
+def ChatGPT_demo(keyword = str, rerun  = False):
    answers = {}
    answers[''] = ['',
                   '',
@@ -82,49 +108,15 @@ def ChatGPT_demo(keyword = str):
                     '받자마자 감자를 얇게 채 썰어 베이컨을 얇게 자른 후에 치즈가루와 후추로 전 부쳐먹었어요.']
    
    randv = randint(0, len(answers['적당'])-1)
-   return answers[keyword][randv]
+   ans = answers[keyword][randv]
+   if rerun == True:
+       randv2 = randint(0, len(answers['적당'])-1)
+       ans = answers[keyword][randv2]
 
+   return ans
    
 
-
-def leave_comments(keyword = str):
-    subh = '키워드를 선택하시면 AI가 예시 구매후기를 보여드려요'
-    lab = '위에서 키워드를 선택해 주세요!'
-    ex = ChatGPT_demo(keyword)
-    val = ''
-
-    if keyword != '':
-        subh = '고객님께서 현재 선택하신 키워드는 ' + keyword + ' 입니다.'
-        lab = '예시 구매후기 :'+ex
-
-    copy = st.form_submit_button('예시 후기 복사해서 등록하기')
-
-    if copy:
-        val = ex
-    print('val', val)
-
-    st.subheader(subh)
-    msg = st.text_area(label=lab, 
-                    value= val,
-                    max_chars=100, 
-                    help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
-                    height=10
-                    )
-    print('msg in leave_comments :', msg)
-
-    #등록 버튼 (코멘트가 추가 됨)
-    photo = st.form_submit_button("사진 업로드", disabled = True)
-    submitted = st.form_submit_button("등록하기")
-    if (submitted or photo or copy) and msg != '':
-        print('keyword in leave_comments :',keyword)
-        print('msg in leave_comments after pressing btn :', msg)
-        st.balloons()
-        st.markdown('##### 작성하신 구매후기가 잘 등록되었습니다! 감사합니다')
-
-        if msg != '':
-            update_spreadsheet(msg, keyword, ex)
-   
-
+@st.cache_data
 def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
     comments = dataframe['리뷰 내용'].tolist()
     score = dataframe['score'].tolist()
@@ -145,13 +137,14 @@ def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
 
     return include[:5], cnt
 
-MESSAGES = []
+st.elements.utils._shown_default_value_warning=True
 
 TOPICS = [
     ('적당', '싱싱', '신선'),
     ('(감자)알','포슬포슬','단단'),
     ('볶음','카레','가루')
 ]
+
 
 #google auth connect
 scope = ['https://spreadsheets.google.com/feeds',
@@ -162,11 +155,11 @@ credentials = service_account.Credentials.from_service_account_info(
 )
 
 gspread_cli = gspread.authorize(credentials)
-sh = gspread_cli.open('comments').worksheet('default')
+sh = gspread_cli.open('comments').worksheet('default_sheet')
 
 #OpenAI
 model_engine = "text-davinci-003"
-openai.api_key = "" #follow step 4 to get a secret_key
+openai.api_key = ""
 
 
 def main() :
@@ -192,7 +185,6 @@ def main() :
     st.subheader('구매후기 분석 결과')
     st.write('키워드를 1개만 선택해주세요')
 
-    # 공간을 2:3 으로 분할하여col3, 4라는 이름을 가진 컬럼을 생성합니다.  
 
     with col1 :
       #감자 상품 이미지
@@ -247,7 +239,6 @@ def main() :
         else:
             ratio = int(cnt*100/(0.2*len(df)))
         st.subheader(f'선택하신 "{keyword}" 을(를) 포함하는 후기: {cnt:,}개({ratio}%)')
-#    print(comments[:5])
 
     for comment in comments:
         temp = comment.split('\n')
@@ -259,16 +250,51 @@ def main() :
            st.write(comment)
 
     st.write('  ') #split spaces
-    st.write('  ') #split spaces
-    with st.form(key='my_form'):
-        temp = leave_comments(kwd_value)
-    
+    st.write('---') #split spaces
 
-    a_df = pd.DataFrame(sh.get_all_records())
-    site_comments = a_df.Comment.tolist()
+
+    cp = st.button('예시 후기 복사하기', key = 'copy')
+
+    ex = ChatGPT_demo(kwd_value)
+    label = '위에서 키워드를 선택해 주세요!'
+    subh = '키워드를 선택하시면 AI가 예시 구매후기를 보여드려요'
+    if kwd_value != '':
+        label = '예시 후기 : '+ex
+        subh = '고객님께서 현재 선택하신 키워드는 ' + kwd_value + ' 입니다.'
+
+    if 'ui' not in st.session_state:
+        st.session_state['ui'] = ''
+    
+    if cp:
+        st.session_state.ui = ex
+
+
+    st.subheader(subh)
+    msg = st.text_area(label = label,
+                       value = st.session_state.ui,
+                       key = 'ui',
+                       height = 10)       
+    submit = st.button('등록하기',
+                       type = 'primary')
+    regen = st.button('후기 다시 제안받기')
+
+    if regen:
+        ex = ChatGPT_demo(kwd_value, rerun= True)
+
+    if submit and msg != '':
+        st.balloons()
+        st.markdown('##### 작성하신 구매후기가 잘 등록되었습니다! 감사합니다')
+        update_spreadsheet(msg, kwd_value, ex)
+
+    st.write('---')
+    st.write(' ')
+
+
+    site_comments = sh.col_values(1)
+
 
     st.markdown('#### 다른 분들의 후기도 확인해보세요')
-    for cmt in site_comments[-5:]:
+    for cmt in site_comments[:-6:-1]:
         st.info(cmt)
 
     #copyright
