@@ -233,7 +233,7 @@ def main() :
     st.write('  ')
 
     kwd_value = ''
-    if len(keyword) > 1:
+    if len(selected_keywords) > 1:
         kwd_value = selected_keywords[1]
 
     comments, cnt = load_comments(df, kwd_value, 5)
