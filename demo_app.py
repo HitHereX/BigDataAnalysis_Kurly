@@ -132,19 +132,27 @@ def load_comments(dataframe : pd.DataFrame, to_find : str, num : int) -> list:
 
     return include[:5], cnt
 
+
+def google_analytics():
+    # Add Google Analytics code to the header
+    ga_code = """
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T89084L2DT"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-T89084L2DT');
+    </script>
+    """
+    components.html(
+        ga_code,
+        width=0,
+        height=0
+    )  # JavaScript works
 st.elements.utils._shown_default_value_warning=True
 
-st.markdown(
-    """
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-T89084L2DT"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-T89084L2DT');
-        </script>
-    """, unsafe_allow_html=True)
 
 TOPICS = [
     ('적당', '싱싱', '신선'),
@@ -170,6 +178,7 @@ openai.api_key = ""
 
 
 def main() :
+    google_analytics()
 
     st.title("마켓컬리 구매후기 분석 데모 페이지")
     st.write('본 서비스는 설문을 위한 Test-시연 페이지입니다 (참고용)')
