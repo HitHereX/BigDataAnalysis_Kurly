@@ -115,7 +115,7 @@ def leave_comments(keyword = str):
     #등록 버튼 (코멘트가 추가 됨)
     photo = st.form_submit_button("사진 업로드", disabled = True)
     submitted = st.form_submit_button("등록하기")
-    if submitted or photo or copy:
+    if (submitted or photo or copy) and msg != '':
         print('keyword in leave_comments :',keyword)
         print('msg in leave_comments after pressing btn :', msg)
         st.balloons()
