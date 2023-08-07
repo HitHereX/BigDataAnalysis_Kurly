@@ -14,7 +14,7 @@ import logging
 import shutil
 import streamlit.components.v1 as components
 
-
+#google analytics call
 with open("google_analytics.html", "r") as f:
     html_code = f.read()
     components.html(html_code, height=0)
@@ -97,10 +97,11 @@ def leave_comments(keyword = str):
         subh = '고객님께서 현재 선택하신 키워드는 ' + keyword + ' 입니다.'
         lab = '예시 구매후기 :'+ex
 
-    copy = st.form_submit_button('예시 후기 복사하기')
+    copy = st.form_submit_button('예시 후기 복사해서 등록하기')
+
     if copy:
         val = ex
-    print('val', val)
+#    print('val', val)
 
     st.subheader(subh)
     msg = st.text_area(label=lab, 
@@ -109,14 +110,14 @@ def leave_comments(keyword = str):
                     help='다른 고객분들께 여러분의 구매경험을 나누어 주세요', 
                     height=10
                     )
-    print(msg)
-
-
+    print('msg in leave_comments :', msg)
 
     #등록 버튼 (코멘트가 추가 됨)
     photo = st.form_submit_button("사진 업로드", disabled = True)
     submitted = st.form_submit_button("등록하기")
-    if submitted or photo:
+    if submitted or photo or copy:
+        print('keyword in leave_comments :',keyword)
+        print('msg in leave_comments after pressing btn :', msg)
         st.balloons()
         st.markdown('##### 작성하신 구매후기가 잘 등록되었습니다! 감사합니다')
 
@@ -212,7 +213,7 @@ def main() :
     # word cloud image
     st.image(wc_img)
 
-    selected_keywords = ['']
+    selected_keyword = ''
 
 
     tabs = st.tabs(['🚛 적당, 싱싱, 신선', '🥔 (감자)알, 포슬포슬, 단단', '🍽 볶음, 카레, 가루'])
@@ -222,21 +223,21 @@ def main() :
             for atopic in topic:
                 t = st.checkbox(atopic) #알도 예외처리!
                 if t:
-                    if atopic ==  '(감자)알' : selected_keywords.append('알도')
-                    else: selected_keywords.append(atopic)
-    print('selected keywords', selected_keywords)
+                    if atopic ==  '(감자)알' : selected_keyword = '알도'
+                    else: selected_keyword = atopic
+    print('selected keywords', selected_keyword)
 
 
     # split spaces
     st.write('  ')
     st.write('  ')
 
-    comments, cnt = load_comments(df, selected_keywords[-1], 5)
+    comments, cnt = load_comments(df, selected_keyword, 5)
     per = int(cnt*100/(0.2*len(df)))
     if per == 500:
        st.markdown('#### 키워드를 선택하시면, 관련 구매후기를 모아보실 수 있어요')
     else:
-        keyword = selected_keywords[-1]
+        keyword = selected_keyword
         if keyword == '가루':
             ratio = int(cnt*1000/(0.2*len(df)))
         else:
@@ -256,7 +257,7 @@ def main() :
     st.write('  ') #split spaces
     st.write('  ') #split spaces
     with st.form(key='my_form'):
-        temp = leave_comments(selected_keywords[-1])
+        temp = leave_comments(selected_keyword)
     
 
     a_df = pd.DataFrame(sh.get_all_records())
