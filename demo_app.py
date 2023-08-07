@@ -101,7 +101,7 @@ def leave_comments(keyword = str):
 
     if copy:
         val = ex
-#    print('val', val)
+    print('val', val)
 
     st.subheader(subh)
     msg = st.text_area(label=lab, 
@@ -213,7 +213,7 @@ def main() :
     # word cloud image
     st.image(wc_img)
 
-    selected_keyword = ''
+    selected_keywords = ['']
 
 
     tabs = st.tabs(['🚛 적당, 싱싱, 신선', '🥔 (감자)알, 포슬포슬, 단단', '🍽 볶음, 카레, 가루'])
@@ -223,21 +223,25 @@ def main() :
             for atopic in topic:
                 t = st.checkbox(atopic) #알도 예외처리!
                 if t:
-                    if atopic ==  '(감자)알' : selected_keyword = '알도'
-                    else: selected_keyword = atopic
-    print('selected keywords', selected_keyword)
+                    if atopic ==  '(감자)알' : selected_keywords.append('알도')
+                    else: selected_keywords.append(atopic)
+    print('selected keywords', selected_keywords)
 
 
     # split spaces
     st.write('  ')
     st.write('  ')
 
-    comments, cnt = load_comments(df, selected_keyword, 5)
+    kwd_value = ''
+    if len(keyword) > 1:
+        kwd_value = selected_keywords[1]
+
+    comments, cnt = load_comments(df, kwd_value, 5)
     per = int(cnt*100/(0.2*len(df)))
     if per == 500:
        st.markdown('#### 키워드를 선택하시면, 관련 구매후기를 모아보실 수 있어요')
     else:
-        keyword = selected_keyword
+        keyword = kwd_value
         if keyword == '가루':
             ratio = int(cnt*1000/(0.2*len(df)))
         else:
@@ -257,7 +261,7 @@ def main() :
     st.write('  ') #split spaces
     st.write('  ') #split spaces
     with st.form(key='my_form'):
-        temp = leave_comments(selected_keyword)
+        temp = leave_comments(kwd_value)
     
 
     a_df = pd.DataFrame(sh.get_all_records())
