@@ -8,11 +8,6 @@ import pandas as pd
 import gspread
 import openai
 
-import pathlib
-from bs4 import BeautifulSoup
-import logging
-import shutil
-import streamlit.components.v1 as components
 import streamlit_analytics
 
 def update_spreadsheet(comment, chosen_topic, suggested_review):
@@ -153,8 +148,6 @@ credentials = service_account.Credentials.from_service_account_info(
 
 gspread_cli = gspread.authorize(credentials)
 sh = gspread_cli.open('comments').worksheet('default_sheet')
-log = gspread_cli.open('comments').worksheet('log')
-
 #OpenAI
 model_engine = "text-davinci-003"
 openai.api_key = ""
