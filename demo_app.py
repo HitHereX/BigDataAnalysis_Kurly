@@ -275,7 +275,8 @@ def main() :
            st.write(comment)
 
     st.write('  ') #split spaces
-    st.write('---') #split spaces
+    st.write('  ') #split spaces
+    st.write('  ') #split spaces
 
 
 
@@ -315,8 +316,9 @@ def main() :
         st.markdown('##### 작성하신 구매후기가 잘 등록되었습니다! 감사합니다')
         update_spreadsheet(msg, kwd_value, ex)
 
-    st.write('---')
-    st.write(' ')
+    st.write('  ') #split spaces
+    st.write('  ') #split spaces
+    st.write('  ')
 
     satisfy = ['전혀 불만족','불만족','다소 불만족','보통','다소 만족','만족','매우 만족']
     st.subheader('본 페이지에 대한 만족도를 알려주세요')
@@ -331,6 +333,8 @@ def main() :
 
     
 
+    st.write('  ') #split spaces
+    st.write('  ') #split spaces
     st.write('  ') #split spaces
     st.write('  ') #split spaces
 
