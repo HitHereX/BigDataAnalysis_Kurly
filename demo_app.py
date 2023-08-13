@@ -246,7 +246,6 @@ def main() :
     st.write('  ')
     st.write('  ')
 
-
     kwd_value = ''
     if len(selected_keywords) > 1:
         kwd_value = selected_keywords[1]
