@@ -140,9 +140,10 @@ credentials = service_account.Credentials.from_service_account_info(
 )
 
 gspread_cli = gspread.authorize(credentials)
-sh = gspread_cli.open('comments').worksheet('default_sheet')
-topic_log = gspread_cli.open('comments').worksheet('topic_log')
-sati = gspread_cli.open('comments').worksheet('satisfied')
+sheet_title = '2023.08_project_potato_demo_log.comments'
+sh = gspread_cli.open(sheet_title).worksheet('default_sheet')
+topic_log = gspread_cli.open(sheet_title).worksheet('topic_log')
+sati = gspread_cli.open(sheet_title).worksheet('satisfied')
 
 #OpenAI
 model_engine = "text-davinci-003"
@@ -234,10 +235,13 @@ def main() :
                     if atopic == '(감자)알' : selected_keywords.append('알도')
                     else: selected_keywords.append(atopic)
     print('selected keywords', selected_keywords)
+    
 
-    if len(selected_keywords) > 1:
+    prev_selected = ''
+    if len(selected_keywords) > 1 and selected_keywords[1] != prev_selected:
         topic_log.append_row([str(selected_keywords[1]), 
                               str(datetime.now(timezone('Asia/Seoul')))])
+        prev_selected = selected_keywords[1]
 
 
     # split spaces
@@ -322,6 +326,8 @@ def main() :
     sati_submit = st.button('만족도 등록하기')
     if sati_submit:
         sati.append_row([satisfied, str(datetime.now(timezone('Asia/Seoul')))])
+        st.markdown('##### :blue[만족도 평가가 잘 등록되었습니다. 감사합니다. 데모 시연 페이지를 종료해 주세요]')
+
     
 
 
