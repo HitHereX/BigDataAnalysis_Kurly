@@ -9,8 +9,6 @@ import gspread
 import openai
 
 import streamlit_analytics
-from streamlit_modal import Modal
-import streamlit.components.v1 as components
 
 
 def update_spreadsheet(comment, chosen_topic, suggested_review):
