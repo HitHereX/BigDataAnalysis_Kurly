@@ -41,7 +41,8 @@ def update_spreadsheet(comment, chosen_topic, suggested_review):
                 int(now.month),
                 int(now.day),
                 int(now.hour),
-                int(now.minute)
+                int(now.minute),
+                str(now)
         ]
 
         print(l)
@@ -237,8 +238,8 @@ def main() :
     print('selected keywords', selected_keywords)
     
 
-    prev_selected = ''
-    if len(selected_keywords) > 1 and selected_keywords[1] != prev_selected:
+    prev_selected = topic_log.col_values(1)
+    if len(selected_keywords) > 1 and selected_keywords[1] != prev_selected[-1]:
         topic_log.append_row([str(selected_keywords[1]), 
                               str(datetime.now(timezone('Asia/Seoul')))])
         prev_selected = selected_keywords[1]
@@ -330,8 +331,10 @@ def main() :
 
     
 
+    st.write('  ') #split spaces
+    st.write('  ') #split spaces
 
-    st.markdown('#### 다른 분들의 후기도 확인해보세요')
+    st.markdown('#### 참고.다른 분들의 후기도 확인해보세요')
     site_comments = sh.col_values(1)
     displayed_site_comments = []
     displayed_site_cnt = 0
