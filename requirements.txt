@@ -1,2 +1,5 @@
+streamlit-analytics
 openai==0.27.8
-streamlit-modal==0.1.0
+gspread
+pytz
+bs4
