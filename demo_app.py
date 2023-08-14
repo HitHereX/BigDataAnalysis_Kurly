@@ -15,7 +15,7 @@ def update_spreadsheet(comment, chosen_topic, suggested_review):
     topic_keys = {  '적당' : 0, 
                     '싱싱' : 1, 
                     '신선' : 2, 
-                    '(감자)알' : 3,
+                    '알도' : 3,
                     '포슬포슬' : 4,
                     '단단' : 5,
                     '볶음' : 6,
